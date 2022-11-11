@@ -1,0 +1,11 @@
+etherscan: &default
+  api_key: <%= ENV['ETHERSCAN_API_KEY'] %>
+
+production:
+  <<: *default
+
+staging:
+  <<: *default
+
+development:
+  <<: *default
