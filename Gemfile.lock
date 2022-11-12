@@ -189,8 +189,8 @@ DEPENDENCIES
   pry-rails
   puma (~> 4.1)
   rails (~> 6.0.6)
+  redis (~> 4.0)
   sidekiq
-  spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
 
