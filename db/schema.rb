@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_12_151406) do
+ActiveRecord::Schema.define(version: 2022_11_12_162329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,13 +31,9 @@ ActiveRecord::Schema.define(version: 2022_11_12_151406) do
     t.string "symbol"
     t.string "image_url"
     t.string "external_url"
-    t.jsonb "holders", default: {}
-    t.jsonb "transfers", default: {}
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["address"], name: "index_nodes_on_address", unique: true
-    t.index ["holders"], name: "index_nodes_on_holders", using: :gin
-    t.index ["transfers"], name: "index_nodes_on_transfers", using: :gin
   end
 
   add_foreign_key "node_data", "nodes"
