@@ -52,9 +52,9 @@ class Node < ApplicationRecord
     end
   end
 
-  def related_node_ids(refresh: false)
+  def related_node_ids
     # filtering top 10 nodes with a score > 10
-    related_node_scores(refresh: refresh)
+    related_node_scores
       .select { |_, score| score > 10 }
       .sort_by { |_, score| -score }
       .map { |id, _| id }
@@ -63,5 +63,17 @@ class Node < ApplicationRecord
 
   def related_nodes
     Node.where(id: related_node_ids)
+  end
+
+  # TODO: move to serializer?
+  def serialize
+    {
+      id: id,
+      address: address,
+      name: name,
+      symbol: symbol,
+      image_url: image_url,
+      meta: {}
+    }
   end
 end

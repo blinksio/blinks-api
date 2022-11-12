@@ -16,4 +16,10 @@ Rails.application.routes.draw do
     mount Sidekiq::Web, at: "/sidekiq"
   end
 
+  resources :nodes, only: [:show] do
+    member do
+      get :graph
+    end
+  end
+
 end
