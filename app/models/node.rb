@@ -15,15 +15,18 @@ class Node < ApplicationRecord
     node_data.transfers = transfers
     node_data.save
     ActiveRecord::Base.logger = current_logger
+
+    # triggering a transfer_addresses cache refresh
+    transfer_addresses(refresh: true)
   end
 
-  def transfer_addresses
+  def transfer_addresses(refresh: false)
     # checking if result is cached
-    return Rails.cache.read("transfer_addresses:#{address}") if Rails.cache.exist?("transfer_addresses:#{address}")
+    return Rails.cache.read("transfer_addresses:#{address}") if Rails.cache.exist?("transfer_addresses:#{address}") && !refresh
 
     return [] if node_data.blank? || node_data.transfers.blank?
 
-    Rails.cache.fetch("transfer_addresses:#{address}", expires_in: 1.day) do
+    Rails.cache.fetch("transfer_addresses:#{address}", force: refresh) do
       node_data.transfers.map { |tx| tx['from'] } + node_data.transfers.map { |tx| tx['to'] }
 
       # getting all wallet addresses from nft transfers
@@ -43,7 +46,7 @@ class Node < ApplicationRecord
   end
 
   def related_node_scores(refresh: false)
-    Rails.cache.fetch("node_scores:#{address}", expires_in: 1.day, force: refresh) do
+    Rails.cache.fetch("node_scores:#{address}", force: refresh) do
       # fetching all nodes with node data
       nodes = Node.where(id: NodeData.pluck(:node_id)).where.not(id: id)
 
