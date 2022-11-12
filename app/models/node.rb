@@ -21,12 +21,16 @@ class Node < ApplicationRecord
   end
 
   def transfer_addresses(refresh: false)
+    return @transfer_addresses if @transfer_addresses.present?
+
     # checking if result is cached
-    return Rails.cache.read("transfer_addresses:#{address}") if Rails.cache.exist?("transfer_addresses:#{address}") && !refresh
+    @transfer_addresses ||= Rails.cache.read("transfer_addresses:#{address}")
+
+    return @transfer_addresses if @transfer_addresses.present? && !refresh
 
     return [] if node_data.blank? || node_data.transfers.blank?
 
-    Rails.cache.fetch("transfer_addresses:#{address}", force: refresh) do
+    @transfer_addresses = Rails.cache.fetch("transfer_addresses:#{address}", force: refresh) do
       node_data.transfers.map { |tx| tx['from'] } + node_data.transfers.map { |tx| tx['to'] }
 
       # getting all wallet addresses from nft transfers
@@ -45,10 +49,13 @@ class Node < ApplicationRecord
     (transfer_addresses & other_node.transfer_addresses).count
   end
 
-  def related_node_scores(refresh: false)
+  def related_node_scores(nodes: nil, refresh: false)
     Rails.cache.fetch("node_scores:#{address}", force: refresh) do
       # fetching all nodes with node data
-      nodes = Node.where(id: NodeData.pluck(:node_id)).where.not(id: id)
+      nodes ||= Node.where(id: NodeData.pluck(:node_id))
+
+      # excluding self node
+      nodes = nodes.to_a.reject { |node| node.id == id }
 
       # calculating scores for all nodes
       scores = nodes.map { |n| [n.id, score_vs_node(n)] }.to_h
