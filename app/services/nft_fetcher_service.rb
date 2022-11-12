@@ -63,8 +63,4 @@ class NftFetcherService
     # removing duplicates
     addresses.uniq
   end
-
-
-
-
 end
