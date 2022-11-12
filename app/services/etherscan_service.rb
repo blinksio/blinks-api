@@ -1,7 +1,7 @@
 class EtherscanService
   attr_accessor :chain
 
-  def initialize(contract_address, chain = 'mainnet')
+  def initialize(chain = 'mainnet')
     @chain = chain
   end
 
@@ -17,8 +17,14 @@ class EtherscanService
     request_etherscan(uri)
   end
 
-  def nft_transfers(contract_address)
+  def nft_transfers_of_contract(contract_address)
     uri = etherscan_url + "/api?module=account&action=tokennfttx&contractaddress=#{contract_address}&sort=desc&apikey=#{api_key}"
+
+    request_etherscan(uri)
+  end
+
+  def nft_transfers_of_address(address)
+    uri = etherscan_url + "/api?module=account&action=tokennfttx&address=#{address}&sort=desc&apikey=#{api_key}"
 
     request_etherscan(uri)
   end
