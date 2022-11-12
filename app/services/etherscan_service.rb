@@ -99,7 +99,13 @@ class EtherscanService
       raise "Etherscan #{response.status} :: #{response.body.to_s}"
     end
 
-    JSON.parse(response.body.to_s)['result']
+    result = JSON.parse(response.body.to_s)['result']
+
+    if result.is_a?(String)
+      raise "Etherscan :: #{result}"
+    end
+
+    result
   end
 
   def etherscan_url
