@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_12_112639) do
+ActiveRecord::Schema.define(version: 2022_11_12_151406) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "node_data", force: :cascade do |t|
+    t.bigint "node_id", null: false
+    t.jsonb "holders", default: []
+    t.jsonb "transfers", default: []
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["node_id"], name: "index_node_data_on_node_id"
+  end
 
   create_table "nodes", force: :cascade do |t|
     t.string "address", null: false
@@ -27,6 +36,9 @@ ActiveRecord::Schema.define(version: 2022_11_12_112639) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["address"], name: "index_nodes_on_address", unique: true
+    t.index ["holders"], name: "index_nodes_on_holders", using: :gin
+    t.index ["transfers"], name: "index_nodes_on_transfers", using: :gin
   end
 
+  add_foreign_key "node_data", "nodes"
 end

@@ -4,6 +4,8 @@ class Node < ApplicationRecord
   validates :address, presence: true, uniqueness: true
   validates :address_type, presence: true
 
+  has_one :node_data, dependent: :destroy
+
   def update_nft_transfers
     # disabling logging due to very verbosy output
     current_logger = ActiveRecord::Base.logger
