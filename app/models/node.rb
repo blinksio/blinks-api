@@ -10,7 +10,10 @@ class Node < ApplicationRecord
     # disabling logging due to very verbosy output
     current_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = nil
-    transfers = EtherscanService.new.nft_transfers_of_contract(address)
+    # trying blokness first, fallback to etherscan if the response is empty
+    transfers = BloknessService.new.nft_transfers_of_contract(address)
+    transfers = EtherscanService.new.nft_transfers_of_contract(address) if transfers.blank?
+
     node_data = NodeData.find_or_create_by(node: self)
     node_data.transfers = transfers
     node_data.save
