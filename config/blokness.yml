@@ -1,0 +1,11 @@
+blokness: &default
+  api_key: <%= ENV['BLOKNESS_API_KEY'] %>
+
+production:
+  <<: *default
+
+staging:
+  <<: *default
+
+development:
+  <<: *default
