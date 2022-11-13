@@ -83,6 +83,18 @@ class Node < ApplicationRecord
     Node.where(id: related_node_ids).where(spam: false)
   end
 
+  def update_erc721_image_url
+    return unless erc721?
+
+    # trying blokness first, fallback to etherscan if the response is empty
+    collection_details = BloknessService.new.collection_details(address)
+
+    return if collection_details.blank? || collection_details['icon'].blank?
+
+    self.image_url = collection_details['icon']
+    save
+  end
+
   # TODO: move to serializer?
   def serialize
     {
