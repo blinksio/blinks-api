@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_13_010000) do
+ActiveRecord::Schema.define(version: 2022_11_13_031357) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,9 +21,7 @@ ActiveRecord::Schema.define(version: 2022_11_13_010000) do
     t.jsonb "transfers", default: []
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["holders"], name: "index_node_data_on_holders", using: :gin
     t.index ["node_id"], name: "index_node_data_on_node_id"
-    t.index ["transfers"], name: "index_node_data_on_transfers", using: :gin
   end
 
   create_table "nodes", force: :cascade do |t|
