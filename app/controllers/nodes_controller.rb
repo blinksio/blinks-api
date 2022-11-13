@@ -17,11 +17,12 @@ class NodesController < ApplicationController
     # adding links for all related nodes
     nodes.each do |node|
       node.related_nodes.each do |related_node|
-        links << { source: node.id, target: related_node.id }
+        links << { source: node.id, target: related_node.id } if nodes.include?(related_node)
       end
     end
 
-    nodes += Node.where(id: links.map { |link| link[:source] } + links.map { |link| link[:target] }).to_a
+    # not fetching 3rd degree related nodes (graph becomes to big)
+    # nodes += Node.where(id: links.map { |link| link[:source] } + links.map { |link| link[:target] }).to_a
 
     render json: {
       nodes: nodes.uniq.map(&:serialize),
