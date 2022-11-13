@@ -57,6 +57,9 @@ class Node < ApplicationRecord
       # excluding self node
       nodes = nodes.to_a.reject { |node| node.id == id }
 
+      # excluding spam nodes
+      nodes = nodes.to_a.reject { |node| node.spam }
+
       # calculating scores for all nodes
       scores = nodes.map { |n| [n.id, score_vs_node(n)] }.to_h
     end
@@ -83,7 +86,7 @@ class Node < ApplicationRecord
       name: name,
       symbol: symbol,
       image_url: image_url,
-      meta: {}
+      meta: meta
     }
   end
 end
