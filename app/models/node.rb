@@ -26,12 +26,12 @@ class Node < ApplicationRecord
     # checking if result is cached
     @transfer_addresses ||= Rails.cache.read("transfer_addresses:#{address}")
 
-    return @transfer_addresses if @transfer_addresses.present? && !refresh
+    return @transfer_addresses if !@transfer_addresses.nil? && !refresh
 
-    return [] if node_data.blank? || node_data.transfers.blank?
+    return [] if node_data.blank?
 
     @transfer_addresses = Rails.cache.fetch("transfer_addresses:#{address}", force: refresh) do
-      node_data.transfers.map { |tx| tx['from'] } + node_data.transfers.map { |tx| tx['to'] }
+      node_data.transfers.to_a.map { |tx| tx['from'] } + node_data.transfers.map { |tx| tx['to'] }
 
       # getting all wallet addresses from nft transfers
       addresses = node_data.transfers.map { |tx| tx['from'] } + node_data.transfers.map { |tx| tx['to'] }
