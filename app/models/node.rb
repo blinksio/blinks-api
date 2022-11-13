@@ -75,7 +75,7 @@ class Node < ApplicationRecord
   end
 
   def related_nodes
-    Node.where(id: related_node_ids)
+    Node.where(id: related_node_ids).where(spam: false)
   end
 
   # TODO: move to serializer?
