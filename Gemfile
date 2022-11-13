@@ -43,3 +43,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'http'
 gem 'pry-rails'
 gem 'sidekiq'
+gem 'webdrivers', '~> 4.0'
