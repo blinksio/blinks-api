@@ -6,6 +6,8 @@ class Node < ApplicationRecord
 
   has_one :node_data, dependent: :destroy
 
+  MIN_SCORE = 10
+
   def update_nft_transfers
     # disabling logging due to very verbosy output
     current_logger = ActiveRecord::Base.logger
@@ -44,8 +46,8 @@ class Node < ApplicationRecord
       # ignoring minting addresses
       addresses = addresses.reject { |address| address == '0x0000000000000000000000000000000000000000' }
 
-      # removing duplicates
-      addresses.uniq
+      # minimizing addresses and removing duplicates
+      addresses.map { |address| address[2..8] }.uniq
     end
   end
 
@@ -67,13 +69,16 @@ class Node < ApplicationRecord
 
       # calculating scores for all nodes
       scores = nodes.map { |n| [n.id, score_vs_node(n)] }.to_h
+
+      # selecting top nodes
+      scores.select { |_, score| score > MIN_SCORE }
     end
   end
 
   def related_node_ids
     # filtering top 10 nodes with a score > 10
     related_node_scores
-      .select { |_, score| score > 10 }
+      .select { |_, score| score > MIN_SCORE }
       .sort_by { |_, score| -score }
       .map { |id, _| id }
       .first(10)
